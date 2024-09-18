@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="flex w-full h-full justify-center items-center bg" lang="en">
+<html class="flex w-full h-full justify-center items-center bg absolute" lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -100,7 +100,7 @@
     }
 
     .emoji3.selected {
-        background: linear-gradient(0deg, rgba(34, 193, 195, 1) 0%, rgba(253, 187, 45, 1) 100%);
+        background: linear-gradient(0deg, rgba(34, 193, 195, 1), rgba(253, 187, 45, 1));
     }
 
     .emoji4.selected {
@@ -167,6 +167,14 @@
             });
 
     });
+</script>
+
+<script>
+    const HTML = document.querySelector("html")
+
+    closeModal.addEventListener("click", () => {
+        HTML.style = "display: none;"
+    })
 </script>
 
 </html>
