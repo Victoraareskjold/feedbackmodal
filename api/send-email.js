@@ -21,26 +21,41 @@ const transporter = nodemailer.createTransport({
 
 // Route for å håndtere tilbakemeldinger
 app.post("/send-email", (req, res) => {
-  const { emoji, feedback, email } = req.body;
+  console.log("Mottatt POST-forespørsel på /send-email");
+  console.log("Forespørselens kropp:", req.body);
+
+  const { emojiId, feedback, email } = req.body;
+
+  if (!emojiId || !feedback || !email) {
+    console.log("Manglende data:", { emojiId, feedback, email });
+    return res.status(400).json({ message: "Manglende data i forespørselen." });
+  }
 
   // Lag e-postinnholdet
   const mailOptions = {
-    from: process.env.EMAIL_USER, // Sender alltid fra din e-post
-    to: email, // Send til mottakerens e-post fra iframen
+    from: process.env.EMAIL_USER,
+    to: email,
     subject: "Ny tilbakemelding mottatt",
-    text: `Du har mottatt en ny tilbakemelding:\n\nEmoji: ${emoji}\nTilbakemelding: ${feedback}`,
+    text: `Du har mottatt en ny tilbakemelding:\n\nEmoji: ${emojiId}\nTilbakemelding: ${feedback}`,
   };
 
   // Send e-post
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
+      console.error("Feil ved sending av e-post:", error);
       return res.status(500).json({ message: "Feil ved sending av e-post." });
     }
+    console.log("E-post sendt:", info.response);
     res.status(200).json({ message: "Tilbakemelding sendt!" });
   });
 });
 
+// Route for å håndtere GET-forespørsel
+app.get("/", (req, res) => {
+  res.send("Server er i gang");
+});
+
 // Start serveren
 app.listen(PORT, () => {
-  console.log(`Server kjører på port localhost:${PORT}`);
+  console.log(`Server kjører på port ${PORT}`);
 });

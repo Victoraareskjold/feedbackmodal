@@ -147,7 +147,7 @@
         }
 
         // Send til backend via fetch API
-        fetch('/api/send-email', {
+        fetch('/send-email', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -165,6 +165,7 @@
             .catch(error => {
                 console.error('Feil:', error);
             });
+
     });
 </script>
 
