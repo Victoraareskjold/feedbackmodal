@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html class="flex w-full h-full justify-center items-center bg" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Modal</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="flex flex-col gap-12 max-w-sm shadow-xl rounded-xl px-6 py-8 bg-white relative">
+    <button id="closeModal" class="absolute top-2 right-4 text-xs">
+        &#10005;
+    </button>
+
+    <header>
+        <h1 class="text-center font-bold text-xl mb-1 primaryTextColor">Hvordan var din opplevelse?</h1>
+        <p class="text-center font-regular text-sm greyText">Gjerne bare kom med en kort tilbakemelding på hvordan
+            du synes vår tjeneste har funket for deg.</p>
+    </header>
+
+    <section class="emoji-feedback">
+        <!-- Legger til ID-er for emojiene -->
+        <button class="emoji emoji1" data-emoji-id="1">&#x1F622;</button>
+        <button class="emoji emoji2" data-emoji-id="2">&#x1F641;</button>
+        <button class="emoji emoji3 selected" data-emoji-id="3">&#x1F610;</button>
+        <button class="emoji emoji4" data-emoji-id="4">&#x1F60A;</button>
+        <button class="emoji emoji5" data-emoji-id="5">&#x1F970;</button>
+    </section>
+
+    <section class="flex flex-col gap-3">
+        <textarea id="feedbackText" placeholder="Tilbakemelding"
+            class="feedbackField p-1 rounded-md text-sm min-h-24"></textarea>
+        <button id="submitFeedbackBtn" class="primaryColor text-white py-3 rounded-md text-sm">Send inn</button>
+    </section>
+</body>
+
+<script src="script.js"></script>
+
+<style>
+    .bg {
+        background-color: #f9fdff;
+    }
+
+    .primaryTextColor {
+        color: rgba(39, 39, 39, 1);
+    }
+
+    .primaryColor {
+        background-color: rgba(39, 39, 39, 1);
+    }
+
+    .secondaryColor {
+        background-color: #E1E1E1;
+    }
+
+    .greyText {
+        color: rgba(39, 39, 39, 0.75);
+    }
+
+    .emoji-feedback {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .emoji {
+        font-size: 32px;
+        width: 48px;
+        height: 48px;
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out;
+        filter: grayscale(1);
+        background: none;
+        border-radius: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: none;
+    }
+
+    .selected {
+        transform: scale(1.5);
+        filter: grayscale(0);
+    }
+
+    .emoji:hover {
+        transform: scale(1.2);
+    }
+
+    .selected:hover {
+        transform: scale(1.5);
+    }
+
+    /* Bakgrunn for hver emoji */
+    .emoji1.selected {
+        background: linear-gradient(0deg, #ff0f7b, #f89b29);
+    }
+
+    .emoji2.selected {
+        background: linear-gradient(0deg, #4dc9e6, #210cae);
+    }
+
+    .emoji3.selected {
+        background: linear-gradient(0deg, rgba(34, 193, 195, 1) 0%, rgba(253, 187, 45, 1) 100%);
+    }
+
+    .emoji4.selected {
+        background: linear-gradient(0deg, #00ff87, #60efff);
+    }
+
+    .emoji5.selected {
+        background: linear-gradient(0deg, #bf0fff, #cbff49);
+    }
+
+    .feedbackField {
+        border: 1px solid #E1E1E1;
+        resize: none;
+    }
+</style>
+
+<script>
+    const emojis = document.querySelectorAll(".emoji");
+    let selectedEmojiId = 3; // Standard emoji (neutral) ID
+
+    emojis.forEach(emoji => {
+        emoji.addEventListener("click", () => {
+            // Fjern 'selected' klassen fra alle emojier
+            emojis.forEach(e => e.classList.remove("selected"));
+
+            // Legg til 'selected' klassen på den klikkede emojien
+            emoji.classList.add("selected");
+
+            // Sett ID-en for den valgte emojien
+            selectedEmojiId = emoji.getAttribute("data-emoji-id");
+        });
+    });
+
+    document.getElementById("submitFeedbackBtn").addEventListener("click", () => {
+        const feedbackText = document.getElementById("feedbackText").value;
+
+        // Hent mottaker-e-posten fra URL-parametere
+        const urlParams = new URLSearchParams(window.location.search);
+        const receiverEmail = urlParams.get('email');
+
+        if (!receiverEmail) {
+            alert('Mottaker-e-post ikke satt. Vennligst angi e-post i iframen URL.');
+            return;
+        }
+
+        // Send til backend via fetch API
+        fetch('https://din-domen.com/send-feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                emojiId: selectedEmojiId,
+                feedback: feedbackText,
+                email: receiverEmail
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+            .catch(error => {
+                console.error('Feil:', error);
+            });
+    });
+</script>
+
+</html>
