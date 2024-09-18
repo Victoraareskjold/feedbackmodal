@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Route for å håndtere tilbakemeldinger
-app.post("/send-feedback", (req, res) => {
+app.post("/send-email", (req, res) => {
   const { emoji, feedback, email } = req.body;
 
   // Lag e-postinnholdet

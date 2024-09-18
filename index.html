@@ -142,7 +142,7 @@
 
         // Hent mottaker-e-posten fra URL-parametere
         const urlParams = new URLSearchParams(window.location.search);
-        const receiverEmail = urlParams.get('email');
+        const receiverEmail = urlParams.get('recipient');
 
         if (!receiverEmail) {
             alert('Mottaker-e-post ikke satt. Vennligst angi e-post i iframen URL.');
@@ -150,7 +150,7 @@
         }
 
         // Send til backend via fetch API
-        fetch('https://feedbackmodal.vercel.app/send-feedback', {
+        fetch('/api/send-email', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
