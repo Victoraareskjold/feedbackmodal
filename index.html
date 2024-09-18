@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="flex w-full h-full justify-center items-center bg absolute" lang="en">
+<html class="flex w-full h-full justify-center items-center bg absolute top-0 left-0" lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -9,17 +9,17 @@
 </head>
 
 <body class="flex flex-col gap-12 max-w-sm shadow-xl rounded-xl px-6 py-8 bg-white relative">
-    <button id="closeModal" class="absolute top-2 right-4 text-xs">
+    <button id="" class="closeable closeModal absolute top-2 right-4 text-xs">
         &#10005;
     </button>
 
-    <header>
+    <header class="closeable ">
         <h1 class="text-center font-bold text-xl mb-1 primaryTextColor">Hvordan var din opplevelse?</h1>
         <p class="text-center font-regular text-sm greyText">Gjerne bare kom med en kort tilbakemelding på hvordan
             du synes vår tjeneste har funket for deg.</p>
     </header>
 
-    <section class="emoji-feedback">
+    <section class="closeable emoji-feedback">
         <!-- Legger til ID-er for emojiene -->
         <button class="emoji emoji1" data-emoji-id="1">&#x1F622;</button>
         <button class="emoji emoji2" data-emoji-id="2">&#x1F641;</button>
@@ -28,10 +28,28 @@
         <button class="emoji emoji5" data-emoji-id="5">&#x1F970;</button>
     </section>
 
-    <section class="flex flex-col gap-3">
+    <section class="closeable flex flex-col gap-3">
         <textarea id="feedbackText" placeholder="Tilbakemelding"
             class="feedbackField p-1 rounded-md text-sm min-h-24"></textarea>
         <button id="submitFeedbackBtn" class="primaryColor text-white py-3 rounded-md text-sm">Send inn</button>
+        <section id="error" class="text-center hidden">
+            <p id="errorMessage" class="text-center font-medium text-sm text-red-400">Det oppstod et problem,
+                prøv
+                igjen.</p>
+        </section>
+    </section>
+
+
+
+    <section id="success" class="text-center hidden">
+        <header>
+            <h1 class="text-center font-bold text-xl mb-1 primaryTextColor">Tusen takk!</h1>
+            <p class="text-center font-regular text-sm greyText">Vi setter pris på din tilbakemelding.</p>
+        </header>
+        <button id="" class="closeModal text-center text-xs mt-4">
+            Gå tilbake
+        </button>
+
     </section>
 </body>
 
@@ -136,8 +154,10 @@
 
     document.getElementById("submitFeedbackBtn").addEventListener("click", () => {
         const feedbackText = document.getElementById("feedbackText").value;
+        const successSection = document.getElementById("success");
+        const errorSection = document.getElementById("error");
+        const closeables = document.querySelectorAll(".closeable");
 
-        // Hent mottaker-e-posten fra URL-parametere
         const urlParams = new URLSearchParams(window.location.search);
         const receiverEmail = urlParams.get('recipient');
 
@@ -146,7 +166,6 @@
             return;
         }
 
-        // Send til backend via fetch API
         fetch('https://feedbackmodal.vercel.app/send-email', {
             method: 'POST',
             headers: {
@@ -160,21 +179,31 @@
         })
             .then(response => response.json())
             .then(data => {
-                alert(data.message);
+                if (data.message === "Tilbakemelding sendt!") {
+                    closeables.forEach(el => el.style.display = "none");
+                    successSection.classList.remove("hidden");
+                    document.getElementById("successMessage").textContent = "Takk for din tilbakemelding!";
+                } else {
+                    throw new Error(data.message);
+                }
             })
             .catch(error => {
-                console.error('Feil:', error);
+                closeables.forEach(el => el.style.display = "none");
+                errorSection.classList.remove("hidden");
+                document.getElementById("errorMessage").textContent = "Det oppstod en feil: " + error.message;
             });
-
     });
 </script>
 
 <script>
-    const HTML = document.querySelector("html")
+    const HTML = document.querySelector("html");
+    const closeBtns = document.querySelectorAll(".closeModal");
 
-    closeModal.addEventListener("click", () => {
-        HTML.style = "display: none;"
-    })
+    closeBtns.forEach(button => {
+        button.addEventListener("click", () => {
+            HTML.style.display = "none";
+        });
+    });
 </script>
 
 </html>

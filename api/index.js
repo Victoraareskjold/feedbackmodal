@@ -30,13 +30,9 @@ transporter.verify((error, success) => {
 
 // Route for å håndtere tilbakemeldinger
 app.post("/send-email", (req, res) => {
-  console.log("Mottatt POST-forespørsel på /send-email");
-  console.log("Forespørselens kropp:", req.body);
-
   const { emojiId, feedback, email } = req.body;
 
   if (!emojiId || !feedback || !email) {
-    console.log("Manglende data:", { emojiId, feedback, email });
     return res.status(400).json({ message: "Manglende data i forespørselen." });
   }
 
@@ -45,16 +41,14 @@ app.post("/send-email", (req, res) => {
     from: process.env.EMAIL_USER,
     to: email,
     subject: "Ny tilbakemelding mottatt",
-    text: `Du har mottatt en ny tilbakemelding:\n\nEmoji: ${emojiId}\nTilbakemelding: ${feedback}`,
+    text: `Du har mottatt en ny tilbakemelding:\n\Vurdering fra 1 til 5: ${emojiId}\nTilbakemelding: ${feedback}`,
   };
 
   // Send e-post
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error("Feil ved sending av e-post:", error);
       return res.status(500).json({ message: "Feil ved sending av e-post." });
     }
-    console.log("E-post sendt:", info.response);
     res.status(200).json({ message: "Tilbakemelding sendt!" });
   });
 });
