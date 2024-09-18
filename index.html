@@ -39,8 +39,6 @@
         </section>
     </section>
 
-
-
     <section id="success" class="text-center hidden">
         <header>
             <h1 class="text-center font-bold text-xl mb-1 primaryTextColor">Tusen takk!</h1>
@@ -181,7 +179,7 @@
             .then(data => {
                 if (data.message === "Tilbakemelding sendt!") {
                     closeables.forEach(el => el.style.display = "none");
-                    successSection.classList.remove("hidden");
+                    successSection.style = "display: flex"
                     document.getElementById("successMessage").textContent = "Takk for din tilbakemelding!";
                 } else {
                     throw new Error(data.message);
