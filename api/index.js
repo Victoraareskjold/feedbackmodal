@@ -41,7 +41,7 @@ app.post("/send-email", (req, res) => {
     from: process.env.EMAIL_USER,
     to: email,
     subject: "Ny tilbakemelding mottatt",
-    text: `Du har mottatt en ny tilbakemelding:\n\Vurdering fra 1 til 5: ${emojiId}\nTilbakemelding: ${feedback}`,
+    text: `Du har mottatt en ny tilbakemelding:\n\Vurdering: ${emojiId}\nTilbakemelding: ${feedback}`,
   };
 
   // Send e-post

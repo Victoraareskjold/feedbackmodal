@@ -31,7 +31,8 @@
     <section class="closeable flex flex-col gap-3">
         <textarea id="feedbackText" placeholder="Tilbakemelding"
             class="feedbackField p-1 rounded-md text-sm min-h-24"></textarea>
-        <button id="submitFeedbackBtn" class="primaryColor text-white py-3 rounded-md text-sm">Send inn</button>
+        <button id="submitFeedbackBtn" class="submitBtn primaryColor text-white py-3 rounded-md text-sm">Send
+            inn</button>
         <section id="error" class="text-center hidden">
             <p id="errorMessage" class="text-center font-medium text-sm text-red-400">Det oppstod et problem,
                 prøv
@@ -42,7 +43,7 @@
     <section id="success" class="text-center hidden">
         <header>
             <h1 class="text-center font-bold text-xl mb-1 primaryTextColor">Tusen takk!</h1>
-            <p class="text-center font-regular text-sm greyText">Vi setter pris på din tilbakemelding.</p>
+            <p class="text-center font-medium text-sm greyText">Vi setter pris på din tilbakemelding.</p>
         </header>
         <button id="" class="closeModal text-center text-xs mt-4">
             Gå tilbake
@@ -151,16 +152,31 @@
     });
 
     document.getElementById("submitFeedbackBtn").addEventListener("click", () => {
-        const feedbackText = document.getElementById("feedbackText").value;
+        const feedbackText = document.getElementById("feedbackText").value.trim(); // Fjerner unødvendige mellomrom
         const successSection = document.getElementById("success");
         const errorSection = document.getElementById("error");
         const closeables = document.querySelectorAll(".closeable");
+
+        const submitBtn = document.getElementById("submitFeedbackBtn");
+        submitBtn.disabled = true;
+
+        // Nullstill synligheten til feilmeldingen før ny innsending
+        errorSection.style.display = "hidden";
+        successSection.style.display = "hidden";
+
+        // Sjekk om feedback-teksten er tom
+        if (feedbackText.length <= 0) {
+            errorSection.style.display = "block";
+            submitBtn.disabled = false;
+            return;
+        }
 
         const urlParams = new URLSearchParams(window.location.search);
         const receiverEmail = urlParams.get('recipient');
 
         if (!receiverEmail) {
             alert('DEV. FEIL: Ta kontakt med support.');
+            submitBtn.disabled = false;
             return;
         }
 
@@ -181,8 +197,8 @@
                     // Skjul elementene relatert til innsending
                     closeables.forEach(el => el.style.display = "none");
                     // Vis suksessseksjonen
-                    successSection.classList.remove("hidden");
                     successSection.style.display = "block";
+                    errorSection.style.display = "none"
                 } else {
                     throw new Error(data.message);
                 }
@@ -190,9 +206,10 @@
             .catch(error => {
                 // Skjul elementene relatert til innsending
                 closeables.forEach(el => el.style.display = "none");
-                // Vis feilseksjonen
-                errorSection.classList.remove("hidden");
+                // Vis feilseksjonen med en spesifikk feilmelding
+                successSection.style.display = "none";
                 errorSection.style.display = "block";
+                submitBtn.disabled = false;
             });
     });
 </script>
