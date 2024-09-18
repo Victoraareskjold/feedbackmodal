@@ -160,7 +160,7 @@
         const receiverEmail = urlParams.get('recipient');
 
         if (!receiverEmail) {
-            alert('Mottaker-e-post ikke satt. Vennligst angi e-post i iframen URL.');
+            alert('DEV. FEIL: Ta kontakt med support.');
             return;
         }
 
@@ -177,18 +177,22 @@
         })
             .then(response => response.json())
             .then(data => {
-                if (data.message === "Tilbakemelding sendt!") {
+                if (data.message === "Success") {
+                    // Skjul elementene relatert til innsending
                     closeables.forEach(el => el.style.display = "none");
-                    successSection.style = "display: flex"
-                    document.getElementById("successMessage").textContent = "Takk for din tilbakemelding!";
+                    // Vis suksessseksjonen
+                    successSection.classList.remove("hidden");
+                    successSection.style.display = "block";
                 } else {
                     throw new Error(data.message);
                 }
             })
             .catch(error => {
+                // Skjul elementene relatert til innsending
                 closeables.forEach(el => el.style.display = "none");
+                // Vis feilseksjonen
                 errorSection.classList.remove("hidden");
-                document.getElementById("errorMessage").textContent = "Det oppstod en feil: " + error.message;
+                errorSection.style.display = "block";
             });
     });
 </script>

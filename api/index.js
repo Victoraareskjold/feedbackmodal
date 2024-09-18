@@ -49,7 +49,7 @@ app.post("/send-email", (req, res) => {
     if (error) {
       return res.status(500).json({ message: "Feil ved sending av e-post." });
     }
-    res.status(200).json({ message: "Tilbakemelding sendt!" });
+    res.status(200).json({ message: "Success" });
   });
 });
 
