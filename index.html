@@ -152,7 +152,7 @@
     });
 
     document.getElementById("submitFeedbackBtn").addEventListener("click", () => {
-        const feedbackText = document.getElementById("feedbackText").value.trim(); // Fjerner unødvendige mellomrom
+        const feedbackText = document.getElementById("feedbackText").value.trim();
         const successSection = document.getElementById("success");
         const errorSection = document.getElementById("error");
         const closeables = document.querySelectorAll(".closeable");
@@ -161,8 +161,8 @@
         submitBtn.disabled = true;
 
         // Nullstill synligheten til feilmeldingen før ny innsending
-        errorSection.style.display = "hidden";
-        successSection.style.display = "hidden";
+        errorSection.style.display = "none";
+        successSection.style.display = "none";
 
         // Sjekk om feedback-teksten er tom
         if (feedbackText.length <= 0) {
@@ -180,6 +180,7 @@
             return;
         }
 
+        // Send forespørselen til serveren
         fetch('https://feedbackmodal.vercel.app/send-email', {
             method: 'POST',
             headers: {
@@ -196,20 +197,20 @@
                 if (data.message === "Success") {
                     // Skjul elementene relatert til innsending
                     closeables.forEach(el => el.style.display = "none");
-                    // Vis suksessseksjonen
+                    // Vis suksessseksjonen og skjul feilseksjonen
                     successSection.style.display = "block";
-                    errorSection.style.display = "none"
+                    errorSection.style.display = "none"; // Skjul feilmeldingen
                 } else {
                     throw new Error(data.message);
                 }
             })
             .catch(error => {
-                // Skjul elementene relatert til innsending
+                // Skjul innsendingselementene kun hvis innsendingen feiler
                 closeables.forEach(el => el.style.display = "none");
-                // Vis feilseksjonen med en spesifikk feilmelding
+                // Vis feilmeldingen og skjul suksessmeldingen
                 successSection.style.display = "none";
-                errorSection.style.display = "block";
-                submitBtn.disabled = false;
+                errorSection.style.display = "block"; // Vis feilmeldingen
+                submitBtn.disabled = false; // Reaktiver knappen for ny innsending
             });
     });
 </script>
