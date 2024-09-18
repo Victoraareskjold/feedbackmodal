@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Route for å håndtere tilbakemeldinger
-app.post("https://feedbackmodal.vercel.app//send-email", (req, res) => {
+app.post("https://feedbackmodal.vercel.app/send-email", (req, res) => {
   console.log("Mottatt POST-forespørsel på /send-email");
   console.log("Forespørselens kropp:", req.body);
 
